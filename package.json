@@ -1,0 +1,23 @@
+{
+  "name": "tugas2-affanhabib",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2019Genap-PBKK-F/tugas2-affanhabib.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/2019Genap-PBKK-F/tugas2-affanhabib/issues"
+  },
+  "homepage": "https://github.com/2019Genap-PBKK-F/tugas2-affanhabib#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mssql": "^6.1.0"
+  }
+}
