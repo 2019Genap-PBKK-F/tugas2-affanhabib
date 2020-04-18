@@ -430,7 +430,7 @@ app.delete("/api/capaiam-unit/:id&:id2", function(req, res)
 //Select
 app.get("/api/indikator-satuan-kerja/", function(req, res)
 {
-   var query = "select * form Indikator_SatuanKerja"
+   var query = "select * from Indikator_SatuanKerja"
    executeQuery(res, query, null, 0)
 })
 
