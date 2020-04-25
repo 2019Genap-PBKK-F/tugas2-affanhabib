@@ -80,7 +80,8 @@ app.post("/api/data-dasar/", function(req, res)
       { name: 'expired_date', sqltype: sql.DateTime, value: req.body.expired_date }
    ]
 
-   var query = 'insert into DataDasar ( nama, create_date, last_update, expired_date ) values( @nama, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, @expired_date )'
+   var query = 'insert into DataDasar ( nama, create_date, last_update, expired_date )'
+               + 'values( @nama, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, @expired_date )'
    executeQuery(res, query, model, 1)
 })
 
@@ -104,6 +105,63 @@ app.delete("/api/data-dasar/:id", function(req, res)
    ]
 
    var query = "delete from DataDasar where id = @id"
+   executeQuery(res, query, model, 1)
+})
+
+//Aspek
+
+//Select
+app.get("/api/aspek/", function(req, res)
+{
+   var query = "select * from Aspek"
+   executeQuery(res, query, null, 0)
+})
+
+app.get("/api/aspek/nama", function(req, res)
+{
+   var query = 'select id,aspek as name from Aspek'
+   executeQuery(res, query, null, 0)
+})
+
+app.get("/api/aspek/:id",function(req, res)
+{
+   var query = "select * from Aspek where id=" + req.params.id
+   executeQuery(res, query, null, 0)
+})
+
+//Insert
+app.post("/api/aspek/", function(req, res)
+{
+   var model = [
+      { name: 'id', sqltype: sql.Int, value: req.body.id },
+      { name: 'aspek', sqltype: sql.VarChar, value: req.body.aspek },
+      { name: 'komponen_aspek', sqltype: sql.VarChar, value: req.body.komponen_aspek }
+   ]
+
+   var query = 'insert into Aspek ( aspek, komponen_aspek ) values( @aspek, @komponen_aspek )'
+   executeQuery(res, query, model, 1)
+})
+
+//Update
+app.put("/api/aspek/:id", function(req, res) {
+   var model = [
+      { name: 'id', sqltype: sql.Int, value: req.body.id },
+      { name: 'aspek', sqltype: sql.VarChar, value: req.body.aspek },
+      { name: 'komponen_aspek', sqltype: sql.VarChar, value: req.body.komponen_aspek }
+   ]
+
+   var query = 'update Aspek set aspek = @aspek, komponen_aspek = @komponen_aspek where id = @id'
+   executeQuery(res, query, model, 1)
+})
+
+//Delete
+app.delete("/api/aspek/:id", function(req, res)
+{
+   var model = [
+      { name: 'id', sqltype: sql.Int, value: req.params.id }
+   ]
+
+   var query = "delete from Aspek where id = @id"
    executeQuery(res, query, model, 1)
 })
 
@@ -131,7 +189,8 @@ app.post("/api/jenis-satker/", function(req, res)
       { name: 'expired_date', sqltype: sql.DateTime, value: req.body.expired_date }
    ]
 
-   var query = 'insert into JenisSatker ( nama, create_date, last_update, expired_date ) values( @nama, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, @expired_date )'
+   var query = 'insert into JenisSatker ( nama, create_date, last_update, expired_date )'
+               + 'values( @nama, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, @expired_date )'
    executeQuery(res, query, model, 1)
 })
 
@@ -229,15 +288,17 @@ app.post("/api/master-indikator/", function(req, res)
 {
   var model = [
       { name: 'id', sqltype: sql.Int, value: req.body.id },
-      { name: 'id_penyebut', sqltype: sql.Int, value: req.body.id_penyebut },
-      { name: 'id_pembilang', sqltype: sql.Int, value: req.body.id_pembilang },
+      { name: 'id_aspek', sqltype: sql.Int, value: req.body.id_aspek },
+      { name: 'id_pembilang', sqltype: sql.Int, value: req.body.id_penyebut },
+      { name: 'id_penyebut', sqltype: sql.Int, value: req.body.id_pembilang },
       { name: 'nama', sqltype: sql.VarChar, value: req.body.nama },
       { name: 'deskripsi', sqltype: sql.VarChar, value: req.body.deskripsi },
       { name: 'default_bobot', sqltype: sql.Float, value: req.body.default_bobot },
       { name: 'expired_date', sqltype: sql.DateTime, value: req.body.expired_date }
    ]
 
-   var query = "insert into MasterIndikator( id_penyebut, id_pembilang, nama, deskripsi, default_bobot, create_date, last_update, expired_date ) values ( @id_penyebut, @id_pembilang, @nama, @deskripsi, @default_bobot, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, @expired_date)"
+   var query = "insert into MasterIndikator( id_aspek, id_pembilang, id_penyebut, nama, deskripsi, default_bobot, create_date, last_update, expired_date )"
+               + "values ( @id_aspek, @id_pembilang, @id_penyebut, @nama, @deskripsi, @default_bobot, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, @expired_date)"
    executeQuery(res, query, model, 1)
 })
 
@@ -246,14 +307,17 @@ app.put("/api/master-indikator/:id", function(req, res)
 {
    var model = [
       { name: 'id', sqltype: sql.Int, value: req.body.id },
-      { name: 'id_penyebut', sqltype: sql.Int, value: req.body.id_penyebut },
-      { name: 'id_pembilang', sqltype: sql.Int, value: req.body.id_pembilang },
+      { name: 'id_aspek', sqltype: sql.Int, value: req.body.id_aspek },
+      { name: 'id_pembilang', sqltype: sql.Int, value: req.body.id_penyebut },
+      { name: 'id_penyebut', sqltype: sql.Int, value: req.body.id_pembilang },
       { name: 'nama', sqltype: sql.VarChar, value: req.body.nama },
       { name: 'deskripsi', sqltype: sql.VarChar, value: req.body.deskripsi },
-      { name: 'default_bobot', sqltype: sql.Float, value: req.body.default_bobot }
+      { name: 'default_bobot', sqltype: sql.Float, value: req.body.default_bobot },
+      { name: 'expired_date', sqltype: sql.DateTime, value: req.body.expired_date }
    ]
 
-   var query = "update MasterIndikator set id_penyebut = @id_penyebut, id_pembilang = @id_pembilang, nama = @nama, deskripsi = @deskripsi, default_bobot = @default_bobot, last_update = CURRENT_TIMESTAMP where id = @id"
+   var query = "update MasterIndikator set id_aspek = @id_aspek, id_pembilang = @id_pembilang, id_penyebut = @id_penyebut, nama = @nama, deskripsi = @deskripsi," 
+               + " default_bobot = @default_bobot, expired_date = @expired_date, last_update = CURRENT_TIMESTAMP where id = @id"
    executeQuery(res, query, model, 1)
 })
 
@@ -301,7 +365,8 @@ app.put("/api/indikator-periode/:id&id2", function(req, res)
       { name: 'id2', sqltype: sql.Numeric, value: req.params.id2 }
    ]
 
-   var query = "update Indikator_Periode set id_master = @id_master, id_periode = @id_periode, bobot = @bobot where id_master = @id and id_periode = @id2"
+   var query = "update Indikator_Periode set id_master = @id_master, id_periode = @id_periode, bobot = @bobot"
+               + "where id_master = @id and id_periode = @id2"
    executeQuery(res, query, model, 1)
 })
 
@@ -313,7 +378,8 @@ app.delete("/api/indikator-periode/:id&:id2", function(req, res)
       { name: 'id2', sqltype: sql.Numeric, value: req.params.id2 }
    ]
 
-   var query = "delete from Indikator_Periode where id_master = @id_master and id_periode = @id_periode where id_master = @id and id_periode = @id2"
+   var query = "delete from Indikator_Periode where id_master = @id_master and id_periode = @id_periode"
+               + "where id_master = @id and id_periode = @id2"
    executeQuery(res, query, model, 1)
 })
 
