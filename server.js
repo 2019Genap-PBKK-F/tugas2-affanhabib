@@ -50,6 +50,32 @@ var executeQuery = function(res, query, model, reqType) {
    })
 }
 
+//FP
+// publikasi
+app.get("/api/publikasi/", function(req, res)
+{
+    var query = "select * from publikasi"
+    executeQuery(res, query, null, 0);
+});
+// abmas
+app.get("/api/abmas/", function(req, res)
+{
+    var query = "select * from abmas"
+    executeQuery(res, query, null, 0);
+});
+// dosen
+app.get("/api/dosen/", function(req, res)
+{
+    var query = "select * from dosen"
+    executeQuery(res, query, null, 0);
+});
+// penelitian
+app.get("/api/penelitian/", function(req, res)
+{
+    var query = "select * from penelitian"
+    executeQuery(res, query, null, 0);
+});
+
 //Data Dasar
 
 //Select
@@ -406,8 +432,8 @@ app.post("/api/satuan-kerja/", function(req, res)
       { name: 'id_jns_satker', sqltype: sql.Numeric, value: req.body.id_jns_satker },
       { name: 'id_induk_satker', sqltype: sql.VarChar, value: req.body.id_induk_satker },
       { name: 'nama', sqltype: sql.VarChar, value: req.body.nama },
-      { nama: 'email', sqltype: sql.VarBinary, value: req.body.email },
-      { nama: 'expired_date', sqltype: sql.DateTime, value: req.body.expired_date }
+      { name: 'email', sqltype: sql.VarBinary, value: req.body.email },
+      { name: 'expired_date', sqltype: sql.DateTime, value: req.body.expired_date }
    ]   
 
    var query = "insert into SatuanKerja values( @id, @id_jns_satker, @id_induk_satker, @nama, @email, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, @expired_date)"
@@ -422,11 +448,12 @@ app.put("/api/satuan-kerja/:id", function(req, res)
       { name: 'id_jns_satker', sqltype: sql.Numeric, value: req.body.id_jns_satker },
       { name: 'id_induk_satker', sqltype: sql.VarChar, value: req.body.id_induk_satker },
       { name: 'nama', sqltype: sql.VarChar, value: req.body.nama },
-      { nama: 'email', sqltype: sql.VarBinary, value: req.body.email },
-      { nama: 'expired_date', sqltype: sql.DateTime, value: req.body.expired_date }
+      { name: 'email', sqltype: sql.VarBinary, value: req.body.email },
+      { name: 'expired_date', sqltype: sql.DateTime, value: req.body.expired_date },
+      { name: 'idbaru', sqltype: sql.VarChar, value: req.body.idbaru}
    ]
 
-   var query = "update SatuanKerja set id_jns_satker = @id_jns_satker, id_induk_satker = @id_induk_satker, nama = @nama, email = @email, last_update = CURRENT_TIMESTAMP " +
+   var query = "update SatuanKerja set id = @idbaru, id_jns_satker = @id_jns_satker, id_induk_satker = @id_induk_satker, nama = @nama, email = @email, last_update = CURRENT_TIMESTAMP, expired_date = @expired_date " +
                "where id = @id"
    executeQuery(res, query, model, 1)
 })
@@ -435,7 +462,7 @@ app.put("/api/satuan-kerja/:id", function(req, res)
 app.delete("/api/satuan-kerja/:id", function(req, res)
 {
    var model = [
-      { name: 'id', sqltype: sql.UniqueIdentifier, value: req.params.id }
+      { name: 'id', sqltype: sql.VarChar, value: req.params.id }
    ]
 
    var query = "delete from SatuanKerja where id = @id"
