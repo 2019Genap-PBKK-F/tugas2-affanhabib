@@ -1,8 +1,8 @@
 const express = require("express")
 const app = express()
 const sql = require('mssql')
-// const hostname = '10.199.14.46'
-// const port = 8018
+const hostname = '10.199.14.46'
+const port = 8018
 
 //CORS Middleware
 app.use(function (req, res, next) {
@@ -146,6 +146,12 @@ app.get("/api/aspek/", function(req, res)
 app.get("/api/aspek/nama", function(req, res)
 {
    var query = 'select id,aspek as name from Aspek'
+   executeQuery(res, query, null, 0)
+})
+
+app.get("/api/aspek/komponen", function(req, res)
+{
+   var query = 'select id,komponen_aspek from Aspek'
    executeQuery(res, query, null, 0)
 })
 
@@ -424,6 +430,12 @@ app.get("/api/satuan-kerja/nama", function(req, res)
    executeQuery(res, query, null, 0)
 })
 
+app.get("/api/SatuanKerja/name", function(req, res)
+{
+   var query = "SELECT distinct SatuanKerja.id,SatuanKerja.nama from SatuanKerja inner join Indikator_SatuanKerja on SatuanKerja.id=Indikator_SatuanKerja.id_satker"
+   executeQuery(res, query, null, 0);
+});
+
 //Insert
 app.post("/api/satuan-kerja/", function(req, res)
 {
@@ -432,7 +444,7 @@ app.post("/api/satuan-kerja/", function(req, res)
       { name: 'id_jns_satker', sqltype: sql.Numeric, value: req.body.id_jns_satker },
       { name: 'id_induk_satker', sqltype: sql.VarChar, value: req.body.id_induk_satker },
       { name: 'nama', sqltype: sql.VarChar, value: req.body.nama },
-      { name: 'email', sqltype: sql.VarBinary, value: req.body.email },
+      { name: 'email', sqltype: sql.VarChar, value: req.body.email },
       { name: 'expired_date', sqltype: sql.DateTime, value: req.body.expired_date }
    ]   
 
@@ -448,13 +460,14 @@ app.put("/api/satuan-kerja/:id", function(req, res)
       { name: 'id_jns_satker', sqltype: sql.Numeric, value: req.body.id_jns_satker },
       { name: 'id_induk_satker', sqltype: sql.VarChar, value: req.body.id_induk_satker },
       { name: 'nama', sqltype: sql.VarChar, value: req.body.nama },
-      { name: 'email', sqltype: sql.VarBinary, value: req.body.email },
+      { name: 'email', sqltype: sql.VarChar, value: req.body.email },
       { name: 'expired_date', sqltype: sql.DateTime, value: req.body.expired_date },
       { name: 'idbaru', sqltype: sql.VarChar, value: req.body.idbaru}
    ]
 
-   var query = "update SatuanKerja set id = @idbaru, id_jns_satker = @id_jns_satker, id_induk_satker = @id_induk_satker, nama = @nama, email = @email, last_update = CURRENT_TIMESTAMP, expired_date = @expired_date " +
-               "where id = @id"
+   // var query = "update SatuanKerja set id = @idbaru, id_jns_satker = @id_jns_satker, id_induk_satker = @id_induk_satker, nama = @nama, email = @email, last_update = CURRENT_TIMESTAMP, expired_date = @expired_date " +
+   //             "where id = @id"
+   var query = "update SatuanKerja set email = @email, last_update = CURRENT_TIMESTAMP, expired_date = @expired_date where id = @id"
    executeQuery(res, query, model, 1)
 })
 
@@ -533,13 +546,13 @@ app.post("/api/indikator-satuan-kerja/", function(req, res)
    var model = [
       { name: 'id_periode', sqltype: sql.Numeric, value: req.body.id_periode },
       { name: 'id_master', sqltype: sql.Int, value: req.body.id_master },
-      { name: 'id_satker', sqltype: sql.UniqueIdentifier, value: req.body.id_satker },
+      { name: 'id_satker', sqltype: sql.VarChar, value: req.body.id_satker },
       { name: 'bobot', sqltype: sql.Float, value: req.body.bobot },
       { name: 'target', sqltype: sql.Float, value: req.body.target },
       { name: 'capaian', sqltype: sql.Float, value: req.body.capaian }
    ]
 
-   var query = "insert into Indikator_SatuanKerja values( @id_periode, @id_master, @id_satker, @bobot, @target, @capaian, CURRENT_TIMESTAMP"
+   var query = "insert into Indikator_SatuanKerja (id_periode, id_master, id_satker, bobot, targer, capaian, last_update) values (@id_periode, @id_master, @id_satker, @bobot, @target, @capaian, CURRENT_TIMESTAMP)"
    executeQuery(res, query, model, 1)
 })
 
@@ -549,16 +562,16 @@ app.put("/api/indikator-satuan-kerja/:id&:id2&:id3", function(req, res)
    var model = [
       { name: 'id_periode', sqltype: sql.Numeric, value: req.body.id_periode },
       { name: 'id_master', sqltype: sql.Int, value: req.body.id_master },
-      { name: 'id_satker', sqltype: sql.UniqueIdentifier, value: req.body.id_satker },
+      { name: 'id_satker', sqltype: sql.VarChar, value: req.body.id_satker },
       { name: 'bobot', sqltype: sql.Float, value: req.body.bobot },
       { name: 'target', sqltype: sql.Float, value: req.body.target },
       { name: 'capaian', sqltype: sql.Float, value: req.body.capaian },
       { name: 'id', sqltype: sql.Numeric, value: req.params.id },
       { name: 'id2', sqltype: sql.Int, value: req.params.id2 },
-      { name: 'id3', sqltype: sql.UniqueIdentifier, value: req.params.id3 }
+      { name: 'id3', sqltype: sql.VarChar, value: req.params.id3 }
   ]
 
-   var query = "update Indikator_SatuanKerja set id_periode = @id_periode, id_master = @id_master, id_satker = @id_satker, bobot = @bobot, targer = @target " +
+   var query = "update Indikator_SatuanKerja set id_periode = @id_periode, id_master = @id_master, id_satker = @id_satker, bobot = @bobot, targer = @target, " +
                "capaian = @capaian, last_update = CURRENT_TIMESTAMP where id_periode = @id and id_master = @id2 and id_satker = @id3"
    executeQuery(res, query, model, 1)
 })
@@ -569,7 +582,7 @@ app.delete("/api/indikator-satuan-kerja/:id&:id2&:id3", function(req, res)
    var model = [
       { name: 'id_periode', sqltype: sql.Numeric, value: req.params.id },
       { name: 'id_master', sqltype: sql.Int, value: req.params.id2 },
-      { name: 'id_satker', sqltype: sql.UniqueIdentifier, value: req.params.id3 }
+      { name: 'id_satker', sqltype: sql.VarChar, value: req.params.id3 }
    ]
 
    var query = "delete from Indikator_SatuanKerja where id_periode = @id_periode and id_master = @id_master and id_satker = @id_satker"
@@ -584,13 +597,36 @@ app.get("/api/log-indikator-satker", function(req, res){
    executeQuery(res, query, null, 0)
 })
 
+//Konkin
+app.get('/api/konkin/', function(req, res){
+   var query = "SELECT a.aspek, a.komponen_aspek, mi.nama, isk.bobot,isk.capaian,isk.capaian as cap FROM aspek AS a inner JOIN MasterIndikator AS mi ON a.id=mi.id_aspek inner JOIN Indikator_SatuanKerja as isk ON isk.id_indikator_periode=mi.id";
+   executeQuery(res, query, null, 0);
+})
+
+app.get("/api/konkin/:id", function(req, res)
+{
+    var query = "SELECT a.aspek, a.komponen_aspek, mi.nama, isk.bobot,isk.capaian,isk.capaian as cap FROM aspek AS a inner JOIN MasterIndikator AS mi ON a.id=mi.id_aspek inner JOIN Indikator_SatuanKerja as isk ON isk.id_indikator_periode=mi.id where isk.id_satker='"+req.params.id+"'";
+    executeQuery(res, query, null, 0);
+});
+
+// auth
+app.get('/auth/login/:email', function(req, res)
+{
+   var model = [
+      { name: 'email', sqltype: sql.VarChar, value: req.params.email }
+   ]
+   var query = 'select id, nama, email from SatuanKerja where email = @email'
+
+  executeQuery(res, query, model, 1)
+})
+
 //  LISTEN
 
-// app.listen(port, hostname, function () {
-//    var message = "Server runnning on Port: " + port;
-//    console.log(message);
-// });
+app.listen(port, hostname, function () {
+   var message = "Server runnning on Port: " + port;
+   console.log(message);
+});
 
-app.listen(8010, function () {
-   console.log('Listen on port 8010')
-})
+// app.listen(8010, function () {
+//    console.log('Listen on port 8010')
+// })
